@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/estilo.css">
+    <script src="/script.js"></script>
+    <title>Nixbox | music</title>
+</head>
+<body>
+    <header>
+        <h1>Escucha y descarga musica en .mp3</h1>
+        <p>¿Buscas una forma rápida y segura de descargar música de YouTube? Pega la URL de un video o busca por nombre.</p>
+    </header>
+
+    <section class="search-section">
+        <h2>Busca tu canción o pega una URL de YouTube</h2>
+        <div class="search-bar">
+            <input type="text" id="query" placeholder="Nombre de canción o URL de YouTube...">
+            <button onclick="search()">Buscar</button>
+        </div>
+    </section>
+
+    <div id="loading" class="loading-indicator" style="display: none;">
+        <div class="loading-container">
+            <div class="loader-animation">
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <p class="loading-text">NIXBOX | MUSIC</p>
+            <div class="wave">
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <div class="results-container">
+            <div id="results"></div>
+        </div>
+        <aside class="playlist-container">
+            <div class="playlist-header">
+                <h3>Mis Playlists</h3>
+                <button onclick="showCreatePlaylistForm()" class="create-playlist-btn" title="Nueva Playlist">➕</button>
+            </div>
+            
+            <div id="create-playlist-form" style="display: none; margin-bottom: 15px;">
+                <input type="text" id="new-playlist-name" placeholder="Nombre de la playlist..." style="width: 100%; padding: 8px; border: 1px solid #00a8ff; border-radius: 5px; margin-bottom: 8px;">
+                <div style="display: flex; gap: 5px;">
+                    <button onclick="createPlaylist()" style="flex: 1; padding: 8px; background: #00a8ff; color: white; border: none; border-radius: 5px; cursor: pointer;">✓</button>
+                    <button onclick="hideCreatePlaylistForm()" style="flex: 1; padding: 8px; background: #ff6b6b; color: white; border: none; border-radius: 5px; cursor: pointer;">✕</button>
+                </div>
+            </div>
+            
+            <div id="playlists-list" style="margin-bottom: 15px;"></div>
+            
+            <div class="playlist-header" style="margin-top: 15px;">
+                <h4 id="current-playlist-name">Selecciona una playlist</h4>
+                <div style="display: flex; gap: 5px;">
+                    <button onclick="togglePlaylistShuffle()" class="playlist-control-btn" id="sidebar-shuffle-btn" style="opacity: 0.5;" title="Orden Aleatorio">🔀</button>
+                    <button onclick="togglePlaylistRepeat()" class="playlist-control-btn" id="sidebar-repeat-btn" style="opacity: 0.5;" title="Siempre">🔁</button>
+                    <button onclick="deleteCurrentPlaylist()" class="clear-playlist-btn" id="delete-playlist-btn" style="display: none;">🗑️</button>
+                </div>
+            </div>
+            
+            <div id="playlist" class="playlist-content"></div>
+        </aside>
+    </div>
+
+    <section class="how-to">
+        <div class="how-to-content">
+            <h2>📖 ¿Cómo usar Nixbox Music?</h2>
+            <div class="steps-container">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h4>Busca tu canción</h4>
+                        <p>Escribe el nombre de la canción o artista en la barra de búsqueda. También puedes pegar una URL de YouTube directamente.</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h4>Reproduceala o descárgala</h4>
+                        <p>Haz clic en ▶️ para reproducir la canción en la página, o en "Descargar MP3" para obtener el archivo.</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h4>Organiza en playlists</h4>
+                        <p>Crea playlists personalizadas, agrega canciones y controla reproducción con shuffle y repeat desde el panel lateral.</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h4>Disfruta sin límites</h4>
+                        <p>Todo es gratis, sin registrarse, sin anuncios, sin límites. ¡Descarga y escucha lo que quieras!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="features">
+        <div class="features-content">
+            <h2>✨ Características principales</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">💰</div>
+                    <h3>Completamente gratis</h3>
+                    <p>Sin registrarse, sin pagos, sin suscripción. Descarga música ilimitada.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3>Rápido y fácil</h3>
+                    <p>Interfaz intuitiva y minimalista. Encuentra y descarga música en segundos.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔊</div>
+                    <h3>Excelente calidad</h3>
+                    <p>Archivos MP3 en alta calidad directamente desde YouTube.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📱</div>
+                    <h3>Funciona en todo</h3>
+                    <p>Responsive y optimizado para PC, tablet y celular.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; Nixbox | music (rompiendo)</p>
+    </footer>
+</body>
+</html>
