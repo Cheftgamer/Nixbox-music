@@ -1,129 +1,132 @@
-# Nixbox Music - Descargador de Música desde YouTube
+# Nixbox Music - Descargador de Música
 
-Una aplicación web moderna para descargar música desde YouTube y crear playlists personalizadas.
+Una aplicación web moderna completamente en JavaScript para buscar, reproducir y descargar música de forma fácil y rápida.
 
-## Características
+## ✨ Características
 
-✨ **Buscar y descargar música** desde YouTube  
-🎵 **Reproductor de audio integrado** con controles totales  
-📋 **Gestión de playlists** - crea y organiza tus playlists  
-🔀 **Shuffle y repeat** - controla el modo de reproducción  
-📱 **Diseño responsive** - funciona en cualquier dispositivo  
-🎨 **Interfaz moderna** con colores personalizados  
+- 🔍 **Buscar música** - Búsqueda rápida y precisa
+- 🎵 **Reproductor integrado** - Reproduce directamente en el navegador
+- 📋 **Gestión de playlists** - Crea, edita y elimina playlists
+- 💾 **Descarga de canciones** - Descarga canciones en formato MP3
+- 📱 **Diseño responsive** - Funciona en cualquier dispositivo
+- 🎨 **Interfaz moderna** - Colores y diseño profesional
+- ⚡ **Sin dependencias backend** - Todo funciona en el navegador
 
-## Requisitos
+## 🚀 Inicio rápido
 
-- Python 3.8+
-- pip (gestor de paquetes de Python)
-- Navegador web moderno
+### Opción 1: Online (Recomendado)
+Accede directamente desde: https://cheftgamer.github.io/Nixbox-music/
 
-## Instalación
-
-1. **Clona el repositorio**
+### Opción 2: Localmente
+1. Clona el repositorio
 ```bash
 git clone https://github.com/Cheftgamer/Nixbox-music.git
 cd Nixbox-music
 ```
 
-2. **Crea un entorno virtual**
+2. Abre el archivo en tu navegador
 ```bash
-python -m venv .venv
-.venv\Scripts\activate  # En Windows
-# source .venv/bin/activate  # En Mac/Linux
+# En Windows
+start index.html
+
+# En Mac
+open index.html
+
+# En Linux
+xdg-open index.html
 ```
 
-3. **Instala las dependencias**
-```bash
-pip install -r requirements.txt
-```
+O simplemente abre `index.html` con tu navegador favorito.
 
-4. **Ejecuta el servidor**
-```bash
-python script.py
-```
-
-5. **Abre el navegador**
-```
-http://localhost:5000
-```
-
-## Cómo usar
+## 📖 Cómo usar
 
 ### Buscar canciones
 1. Escribe el nombre de la canción en el cuadro de búsqueda
-2. Presiona "Buscar"
+2. Presiona "Buscar" o Enter
 3. Selecciona la canción que deseas
 
 ### Reproducir música
-- Haz clic en el botón de reproducción ▶️
-- Usa los controles: pausa, siguiente, anterior
-- Descarga la música con el botón "Descargar"
+- Haz clic en **▶ Play** para reproducir
+- Usa los controles **Pausar**, **Reanudar** y **Detener**
 
-### Crear Playlists
-1. Haz clic en "Agregar a Playlist"
-2. Crea una nueva playlist o selecciona una existente
-3. Gestiona tu playlist en la barra lateral
+### Crear y gestionar playlists
+1. Abre el modal "Agregar a Playlist"
+2. Crea una nueva o selecciona una existente
+3. Gestiona tu playlist desde la barra lateral con **+ Playlist**
 
-### Modos de reproducción
-- **Shuffle**: Reproduce las canciones en orden aleatorio
-- **Repeat**: Repite la playlist automáticamente
+### Descargar música
+- Haz clic en **⬇ Descargar** en cualquier canción
+- El archivo se descargará como MP3
 
-## Tecnologías usadas
+## 🛠️ Tecnologías
 
-**Frontend:**
-- HTML5
-- CSS3 (Responsive Design)
-- JavaScript Vanilla
+- **Frontend**: HTML5, CSS3, JavaScript Vanilla
+- **API**: JiosaavnAPI (búsqueda y streaming de música)
+- **Almacenamiento**: LocalStorage (navegador)
 
-**Backend:**
-- Flask (Python)
-- yt-dlp (Descarga desde YouTube)
+## 📦 Características técnicas
 
-## Estructura del proyecto
+- 🔒 **Sin servidor backend** - Todo funciona en el navegador
+- 💾 **Persistencia local** - Las playlists se guardan en tu navegador
+- 🌐 **Basado en API pública** - Acceso a millones de canciones
+- 📱 **Responsive Design** - Optimizado para móvil, tablet y desktop
+
+## ⚙️ Requisitos
+
+- Navegador web moderno (Chrome, Firefox, Safari, Edge)
+- Conexión a Internet
+- JavaScript habilitado
+
+## 📝 Estructura del proyecto
 
 ```
 Nixbox-music/
 ├── index.html       # Página principal
-├── estilo.css       # Estilos y diseño
-├── script.js        # Lógica del cliente
-├── script.py        # Backend Flask
-├── .gitignore       # Archivos ignorados en Git
+├── estilo.css       # Estilos CSS3
+├── script.js        # Lógica JavaScript pura
+├── favicon.ico      # Icono del sitio
+├── .gitignore       # Archivos ignorados
 └── README.md        # Este archivo
 ```
 
-## Notas importantes
+## 🎯 API Utilizada
 
-- Las canciones descargadas se guardan en la carpeta `downloads/`
-- Las playlists se guardan en el navegador (localStorage)
-- Requiere conexión a internet para descargar desde YouTube
+**JiosaavnAPI**
+- Proveedor: https://jiosaavn-api.vercel.app
+- Características: Búsqueda ilimitada, descargas de alta calidad, sin autenticación
 
-## Solución de problemas
+## 📝 Notas
 
-### "Módulo no encontrado"
-```bash
-pip install flask yt-dlp
-```
+- Las playlists se guardan en el **localStorage** de tu navegador
+- Cada navegador/dispositivo tiene sus propias playlists
+- Las canciones se reproducen directamente desde la API
+- No se requiere instalación ni configuración
 
-### Puerto 5000 en uso
-Cambia el puerto en `script.py`:
-```python
-if __name__ == '__main__':
-    app.run(debug=True, port=5001)
-```
+## 🐛 Solución de problemas
 
-### No se descarga la música
-- Verifica conexión a internet
-- Intenta con otro video de YouTube
-- Revisa que yt-dlp esté instalado: `pip install --upgrade yt-dlp`
+**"No puedo reproducir las canciones"**
+- El navegador puede estar bloqueando la reproducción por CORS
+- Intenta con otro navegador
+- Verifica tu conexión a Internet
 
-## Autor
+**"Las playlists se borraron"**
+- Se guardan en localStorage del navegador
+- Borrar datos del navegador elimina las playlists
+- Exporta tus playlists regularmente
 
-Cheftgamer
+**"No encuentra mi canción"**
+- Intenta con otro nombre o artista
+- Verifica que no haya errores de tipografía
+- La API puede tardar segundos en responder
 
-## Licencia
+## 📄 Licencia
 
-Este proyecto es de código abierto bajo licencia MIT.
+Proyecto de código abierto
+
+## 👤 Autor
+
+**Cheftgamer**
 
 ---
 
-¿Tienes preguntas? Abre un Issue en el repositorio.
+¿Preguntas? Abre un Issue en el repositorio: https://github.com/Cheftgamer/Nixbox-music

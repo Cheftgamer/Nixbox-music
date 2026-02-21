@@ -15,62 +15,23 @@
     </header>
 
     <section class="search-section">
-        <h2>Busca tu canción o pega una URL de YouTube</h2>
+        <h2>Busca tu canción</h2>
         <div class="search-bar">
-            <input type="text" id="query" placeholder="Nombre de canción o URL de YouTube...">
-            <button onclick="search()">Buscar</button>
+            <input type="text" id="searchInput" placeholder="Nombre de canción...">
+            <button id="searchBtn" onclick="search()">Buscar</button>
         </div>
     </section>
 
-    <div id="loading" class="loading-indicator" style="display: none;">
-        <div class="loading-container">
-            <div class="loader-animation">
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
-            <p class="loading-text">NIXBOX | MUSIC</p>
-            <div class="wave">
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
-        </div>
-    </div>
-
     <div class="main-container">
         <div class="results-container">
-            <div id="results"></div>
+            <div id="resultsContainer"></div>
         </div>
         <aside class="playlist-container">
             <div class="playlist-header">
                 <h3>Mis Playlists</h3>
-                <button onclick="showCreatePlaylistForm()" class="create-playlist-btn" title="Nueva Playlist">➕</button>
             </div>
             
-            <div id="create-playlist-form" style="display: none; margin-bottom: 15px;">
-                <input type="text" id="new-playlist-name" placeholder="Nombre de la playlist..." style="width: 100%; padding: 8px; border: 1px solid #00a8ff; border-radius: 5px; margin-bottom: 8px;">
-                <div style="display: flex; gap: 5px;">
-                    <button onclick="createPlaylist()" style="flex: 1; padding: 8px; background: #00a8ff; color: white; border: none; border-radius: 5px; cursor: pointer;">✓</button>
-                    <button onclick="hideCreatePlaylistForm()" style="flex: 1; padding: 8px; background: #ff6b6b; color: white; border: none; border-radius: 5px; cursor: pointer;">✕</button>
-                </div>
-            </div>
-            
-            <div id="playlists-list" style="margin-bottom: 15px;"></div>
-            
-            <div class="playlist-header" style="margin-top: 15px;">
-                <h4 id="current-playlist-name">Selecciona una playlist</h4>
-                <div style="display: flex; gap: 5px;">
-                    <button onclick="togglePlaylistShuffle()" class="playlist-control-btn" id="sidebar-shuffle-btn" style="opacity: 0.5;" title="Orden Aleatorio">🔀</button>
-                    <button onclick="togglePlaylistRepeat()" class="playlist-control-btn" id="sidebar-repeat-btn" style="opacity: 0.5;" title="Siempre">🔁</button>
-                    <button onclick="deleteCurrentPlaylist()" class="clear-playlist-btn" id="delete-playlist-btn" style="display: none;">🗑️</button>
-                </div>
-            </div>
-            
-            <div id="playlist" class="playlist-content"></div>
+            <div id="playlistItems" style="margin-bottom: 15px;"></div>
         </aside>
     </div>
 

@@ -1,23 +1,42 @@
+const JIOSAAVN_API = 'https://jiosaavn-api.vercel.app/api/search/songs?query=';
+
+let currentAudio = null;
+let playlists = {};
+let currentPlaylist = null;
+let allSearchResults = [];
+
+function loadPlaylists() {
+    const saved = localStorage.getItem('playlists');
+    if (saved) {
+        playlists = JSON.parse(saved);
+        updatePlaylistUI();
+    }
+}
+
+function savePlaylists() {
+    localStorage.setItem('playlists', JSON.stringify(playlists));
+}
+
 async function search() {
-    const query = document.getElementById('query').value;
-    const loadingDiv = document.getElementById('loading');
-    loadingDiv.style.display = 'block';
+    const query = document.getElementById('searchInput').value.trim();
+    if (!query) return;
+
+    const resultsDiv = document.getElementById('resultsContainer');
+    resultsDiv.innerHTML = '<p style="color: #E7E7E7; text-align: center;">Buscando...</p>';
+
     try {
-        const response = await fetch('/search', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ query })
-        });
-        if (!response.ok) {
-            alert('Error en la búsqueda: ' + response.status);
-            loadingDiv.style.display = 'none';
-            return;
-        }
+        const response = await fetch(JIOSAAVN_API + encodeURIComponent(query));
         const data = await response.json();
-        displayResults(data);
+        
+        if (data.results && data.results.length > 0) {
+            allSearchResults = data.results;
+            displayResults(data.results);
+        } else {
+            resultsDiv.innerHTML = '<p style="color: #E7E7E7;">No se encontraron resultados</p>';
+        }
     } catch (error) {
-        alert('Error al buscar: ' + error.message);
-        loadingDiv.style.display = 'none';
+        console.error('Error en búsqueda:', error);
+        resultsDiv.innerHTML = '<p style="color: #D10000;">Error al buscar. Intenta de nuevo.</p>';
     }
 }
 
@@ -155,7 +174,7 @@ function formatTime(seconds) {
     return `${mins}:${secs.toString().padStart(2, '0')}`;
 }
 
-let playlists = {}; // {playlistName: [songs]}
+// {playlistName: [songs]}
 let currentPlaylistName = null;
 let playlistShuffle = false;
 let playlistRepeat = false;
@@ -581,4 +600,269 @@ function loadPlaylistView() {
     }
 }
 
-document.addEventListener('DOMContentLoaded', loadPlaylist);
+// ===== INICIALIZACIÓN =====
+document.addEventListener('DOMContentLoaded', () => {
+    loadPlaylists();
+    
+    const searchBtn = document.getElementById('searchBtn');
+    const searchInput = document.getElementById('searchInput');
+    
+    if (searchBtn) {
+        searchBtn.addEventListener('click', search);
+    }
+    
+    if (searchInput) {
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') search();
+        });
+    }
+});
+
+// ===== FUNCIONES DE BÚSQUEDA Y REPRODUCCIÓN =====
+function displayResults(results) {
+    const resultsDiv = document.getElementById('resultsContainer');
+    resultsDiv.innerHTML = '';
+
+    results.forEach((song) => {
+        const trackDiv = document.createElement('div');
+        trackDiv.className = 'track';
+        
+        const title = song.title || 'Desconocida';
+        const artist = song.artists && song.artists.primary 
+            ? song.artists.primary[0].name 
+            : 'Artista desconocido';
+        const image = song.image && song.image.length > 0 ? song.image[0].url : '';
+        const url = song.url || '';
+        const downloadUrl = song.downloadUrl && song.downloadUrl.length > 0 
+            ? song.downloadUrl[song.downloadUrl.length - 1].url 
+            : null;
+
+        trackDiv.innerHTML = `
+            <div style="display: flex; gap: 12px; align-items: center; width: 100%;">
+                ${image ? `<img src="${image}" alt="${title}" style="width: 50px; height: 50px; border-radius: 4px; object-fit: cover;">` : ''}
+                <div style="flex: 1;">
+                    <h4 style="margin: 0; color: #D10000;">${title}</h4>
+                    <p style="margin: 5px 0 0 0; color: #E7E7E7; font-size: 0.9em;">${artist}</p>
+                </div>
+            </div>
+            <div class="audio-controls">
+                <button onclick="playSong('${title}', '${artist}', '${url}')">▶ Play</button>
+                <button onclick="openPlaylistModal('${title}', '${artist}', '${url}')">+ Playlist</button>
+                ${downloadUrl ? `<button onclick="downloadSongUrl('${downloadUrl}', '${title}')">⬇ Descargar</button>` : ''}
+            </div>
+        `;
+        
+        resultsDiv.appendChild(trackDiv);
+    });
+}
+
+function playSong(title, artist, url) {
+    if (!url) {
+        alert('Enlace de reproducción no disponible');
+        return;
+    }
+
+    if (currentAudio) {
+        currentAudio.pause();
+    }
+
+    currentAudio = new Audio(url);
+    currentAudio.crossOrigin = 'anonymous';
+    currentAudio.play().catch(e => {
+        console.error('Error al reproducir:', e);
+        alert('No se pudo reproducir la canción. El navegador puede estar bloqueando la reproducción.');
+    });
+
+    const resultsDiv = document.getElementById('resultsContainer');
+    const playerDiv = document.createElement('div');
+    playerDiv.className = 'track';
+    playerDiv.innerHTML = `
+        <div style="margin-bottom: 10px;">
+            <h3 style="margin: 0; color: #D10000;">${title}</h3>
+            <p style="margin: 5px 0 0 0; color: #E7E7E7; font-size: 0.9em;">${artist}</p>
+        </div>
+        <div class="audio-controls">
+            <button onclick="pauseSong()">⏸ Pausar</button>
+            <button onclick="resumeSong()">▶ Reanudar</button>
+            <button onclick="stopSong()">⏹ Detener</button>
+        </div>
+    `;
+    
+    resultsDiv.insertBefore(playerDiv, resultsDiv.firstChild);
+}
+
+function pauseSong() {
+    if (currentAudio) currentAudio.pause();
+}
+
+function resumeSong() {
+    if (currentAudio) currentAudio.play();
+}
+
+function stopSong() {
+    if (currentAudio) {
+        currentAudio.pause();
+        currentAudio.currentTime = 0;
+    }
+}
+
+// ===== DESCARGAS =====
+async function downloadSongUrl(url, title) {
+    try {
+        const response = await fetch(url);
+        const blob = await response.blob();
+        const downloadUrl = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = downloadUrl;
+        a.download = `${title}.mp3`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(downloadUrl);
+        document.body.removeChild(a);
+    } catch (error) {
+        console.error('Error al descargar:', error);
+        alert('No se pudo descargar la canción');
+    }
+}
+
+// ===== PLAYLISTS =====
+function openPlaylistModal(title, artist, url) {
+    const modal = document.getElementById('playlistModal') || createPlaylistModal();
+    const playlistList = document.getElementById('playlistList');
+    
+    playlistList.innerHTML = '';
+    
+    Object.keys(playlists).forEach(playlistName => {
+        const option = document.createElement('div');
+        option.className = 'playlist-option';
+        option.textContent = playlistName;
+        option.onclick = () => {
+            if (!playlists[playlistName].some(s => s.title === title)) {
+                playlists[playlistName].push({ title, artist, url });
+                savePlaylists();
+                modal.style.display = 'none';
+                alert(`Agregado a ${playlistName}`);
+            } else {
+                alert('Esta canción ya está en la playlist');
+            }
+        };
+        playlistList.appendChild(option);
+    });
+
+    const newOption = document.createElement('div');
+    newOption.className = 'playlist-option';
+    newOption.innerHTML = '<strong style="color: #D10000;">+ Nueva Playlist</strong>';
+    newOption.onclick = () => {
+        const name = prompt('Nombre de la nueva playlist:');
+        if (name && name.trim()) {
+            const cleanName = name.trim();
+            if (!playlists[cleanName]) {
+                playlists[cleanName] = [{ title, artist, url }];
+                savePlaylists();
+                modal.style.display = 'none';
+                updatePlaylistUI();
+                alert(`Playlist ${cleanName} creada`);
+            } else {
+                alert('La playlist ya existe');
+            }
+        }
+    };
+    playlistList.appendChild(newOption);
+    
+    modal.style.display = 'flex';
+}
+
+function createPlaylistModal() {
+    const modal = document.createElement('div');
+    modal.id = 'playlistModal';
+    modal.className = 'modal-overlay';
+    modal.innerHTML = `
+        <div class="modal-content">
+            <h2>Agregar a Playlist</h2>
+            <div id="playlistList" style="max-height: 300px; overflow-y: auto; margin: 15px 0;"></div>
+            <button onclick="document.getElementById('playlistModal').style.display = 'none'" style="width: 100%; padding: 10px; background: #D10000; color: white; border: none; border-radius: 4px; cursor: pointer;">Cerrar</button>
+        </div>
+    `;
+    
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            modal.style.display = 'none';
+        }
+    });
+    
+    document.body.appendChild(modal);
+    return modal;
+}
+
+function updatePlaylistUI() {
+    const sidebarPlaylists = document.getElementById('playlistItems');
+    if (!sidebarPlaylists) return;
+    
+    sidebarPlaylists.innerHTML = '';
+    
+    Object.keys(playlists).forEach(playlistName => {
+        const item = document.createElement('div');
+        item.className = 'playlist-item';
+        item.innerHTML = `
+            <div onclick="selectPlaylist('${playlistName}')" style="cursor: pointer; flex: 1;">
+                <strong>${playlistName}</strong> (${playlists[playlistName].length})
+            </div>
+            <button onclick="deletePlaylist('${playlistName}')" style="background: #D10000; border: none; color: white; padding: 5px 10px; border-radius: 4px; cursor: pointer;">✕</button>
+        `;
+        sidebarPlaylists.appendChild(item);
+    });
+}
+
+function selectPlaylist(name) {
+    currentPlaylist = name;
+    displayPlaylistTracks();
+}
+
+function displayPlaylistTracks() {
+    if (!currentPlaylist) return;
+
+    const resultsDiv = document.getElementById('resultsContainer');
+    const tracks = playlists[currentPlaylist];
+    
+    resultsDiv.innerHTML = `<h2 style="color: #D10000; margin-bottom: 15px;">${currentPlaylist}</h2>`;
+    
+    if (tracks.length === 0) {
+        resultsDiv.innerHTML += '<p style="color: #E7E7E7;">La playlist está vacía</p>';
+        return;
+    }
+    
+    tracks.forEach((track, index) => {
+        const trackDiv = document.createElement('div');
+        trackDiv.className = 'track';
+        trackDiv.innerHTML = `
+            <div style="flex: 1;">
+                <h4 style="margin: 0; color: #D10000;">${track.title}</h4>
+                <p style="margin: 5px 0 0 0; color: #E7E7E7; font-size: 0.9em;">${track.artist}</p>
+            </div>
+            <div class="audio-controls">
+                <button onclick="playSong('${track.title}', '${track.artist}', '${track.url}')">▶ Play</button>
+                <button onclick="removeFromPlaylist('${currentPlaylist}', ${index})">✕ Quitar</button>
+            </div>
+        `;
+        resultsDiv.appendChild(trackDiv);
+    });
+}
+
+function removeFromPlaylist(playlistName, index) {
+    playlists[playlistName].splice(index, 1);
+    savePlaylists();
+    displayPlaylistTracks();
+    updatePlaylistUI();
+}
+
+function deletePlaylist(name) {
+    if (confirm(`¿Eliminar playlist "${name}"?`)) {
+        delete playlists[name];
+        savePlaylists();
+        updatePlaylistUI();
+        if (currentPlaylist === name) {
+            currentPlaylist = null;
+            document.getElementById('resultsContainer').innerHTML = '';
+        }
+    }
+}
