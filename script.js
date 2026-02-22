@@ -1,3 +1,11 @@
+const expres = require('express');
+const app = expres();
+const port = process.env.PORT || 18012;
+
+app.listen(port, () => {
+    console.log(`Example app listening on port ${port}`)
+});
+
 async function search() {
     const query = document.getElementById('query').value;
     const loadingDiv = document.getElementById('loading');
