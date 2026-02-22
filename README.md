@@ -14,16 +14,6 @@ Una aplicación web moderna completamente en JavaScript para buscar, reproducir 
 
 ## 🚀 Inicio rápido
 
-### Opción 1: Online (Recomendado)
-Accede directamente desde: https://cheftgamer.github.io/Nixbox-music/
-
-### Opción 2: Localmente
-1. Clona el repositorio
-```bash
-git clone https://github.com/Cheftgamer/Nixbox-music.git
-cd Nixbox-music
-```
-
 2. Abre el archivo en tu navegador
 ```bash
 # En Windows
